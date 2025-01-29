@@ -1,0 +1,30 @@
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-2">
+                <select name="ano" id="select_year" class="form-select" aria-placeholder="Selecione o ano...">
+                    <option value=""></option>
+                    {% for ano in ano_list %}
+                    <option value="{{ano}}" {% if ano == ano_selected %} selected {% endif %}>{{ano}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-2">
+                <select name="mes" id="select_month" class="form-select" aria-placeholder="Selecione o mês...">
+                    <option value=""></option>
+                    {% for mes in mes_list %}
+                    <option value="{{mes}}" {% if mes == mes_selected %} selected {% endif %}>{{mes}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-2">
+                <label class="visually-hidden">button</label>
+                <button type="submit" class="btn btn-light"><i class="fa-solid fa-filter fa-sm"></i> Filtrar</button>
+            </div>
+        </div>
+</div>
+
+<div class="fieldWrapper">
+    {{ form.subject.errors }}
+    {{ form.subject.label_tag }}
+    {{ form.subject }}
+</div>

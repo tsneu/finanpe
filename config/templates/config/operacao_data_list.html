@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block page_title %}
+  FinPes - Resumo mensal
+{% endblock page_title %}
+
+{% block content %}
+    <h2 class="p-3">Transações por tipo de operação</h2>
+    
+    <form action="" method="get">
+        {% csrf_token %}
+        {{form_filter}}
+    </form>
+    <hr/>
+    <div class="row">
+        <div class="col-4">
+
+            {% if object_list %}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Operação</th>
+                    <th scope="col">Qtde</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in object_list %}
+                <tr>
+                    <td>{{ item.label }}</td>
+                    <td>{{ item.qtde }}</td>
+                    <td>{{ item.total|floatformat:2 }}</td>
+                    <td><button class="btn btn-light btn-sm detail" data-chave="tipo" data-label="{{item.label}}" data-filter="{{item.tipo}}">Detalhes <i class="fa-solid fa-ellipsis"></i></button></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-4 chart-container">
+            <canvas id="consumoChart"></canvas>
+            
+        </div>
+    </div>
+
+    <h3 class="p-3" id="title-detail"></h3>
+    <div class="text-bg-light p-3" id="transactions_detail">
+        <i>Clique em "Detalhes..."</i>
+    </div>
+    {% endif %}
+
+{% endblock content %}
+
+
+
+{% block javascript %}
+{% load static %}
+<script src="{% static 'filter_detail.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'load_chart.js'%}"></script>
+<script>
+    let ano = document.getElementById('select_year').value;
+    let mes = document.getElementById('select_month').value;
+    let endpoint = '{% url "chart_operacao" "Janeiro" "2025" %}'
+    endpoint = endpoint.replace('Janeiro', mes)
+    endpoint = endpoint.replace('2025', ano)
+    let consumoCtx = document.getElementById("consumoChart").getContext("2d");
+    let consumoChart = new Chart(consumoCtx, {
+        type: "doughnut",
+        options: {
+        responsive: true,
+            title: {
+            display: false,
+            text: ""
+            }
+        }
+    });
+
+    loadChart(consumoChart, endpoint);
+
+ </script>
+{% endblock javascript %}

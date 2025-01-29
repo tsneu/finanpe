@@ -1,0 +1,68 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block page_title %}
+  FinPes - Home
+{% endblock page_title %}
+
+{% block content %}
+<h1 class="p-3"><i class="bi bi-cash-coin"></i> {{mes}}/{{ano}}</h1>
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-9">
+        <h3 class="text-bg-light p-3"><i class="fa-solid fa-sack-dollar"></i> Entradas</h3>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Conta</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in object_list %}
+            <tr>
+              <td>{{item.conta_destino__sigla}}</td>
+              <td class="{% if item.tipo == 'E'%}table-success{% else %}table-warning{% endif %}">
+                {{item.total|floatformat:2}}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-3">
+        <figure class="figure">
+          <img src="{% static 'manage-money-concept.png'%}" class="figure-img img-fluid rounded" alt="gerenciamento pessoal de finanças"/>
+        </figure>
+      </div>
+  </div>
+  <h3 class="text-bg-light p-3"><i class="fa-solid fa-money-bill-trend-up"></i> Consumo</h3>
+  <div class="chart-container"> 
+    <canvas id="consumoChart"></canvas>
+  </div>
+
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'load_chart.js'%}"></script>
+<script> 
+  let endpoint = '{% url "chart_consumo" %}'
+  let consumoCtx = document.getElementById("consumoChart").getContext("2d");
+  let consumoChart = new Chart(consumoCtx, {
+    type: "bar",
+    options: {
+      responsive: true,
+        title: {
+          display: false,
+          text: ""
+        }
+    }
+  });
+  loadChart(consumoChart, endpoint);
+
+
+</script>
+{% endblock javascript %}

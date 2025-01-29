@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block page_title %}
+  FinPes - Saldo Contas
+{% endblock page_title %}
+
+{% block content %}
+    <h2 class="p-3">Saldo de Contas</h2>
+
+    <form action="" method="get">
+        {% csrf_token %}
+        {{form_filter}}
+    </form>
+    <hr/>
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Conta</th>
+                            <th scope="col">Consumo</th>
+                            <th scope="col">Saldo</th>
+                            <th scope="col">Limite</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in object_list %}
+                        <tr>
+                            <td>{{item.conta__nome}}</td>
+                            <td>{{item.total|floatformat:2}}</td>
+                            <td>{{item.conta__saldo|floatformat:2}}</td>
+                            <td>{{item.conta__limite|floatformat:2}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <th scope="col">Quantidade: {{total_rows.total_count}}</th>
+                            <th scope="col">Total: R$ {{total_rows.total_sum|floatformat:2}}</th>
+                            <th></th>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <canvas id="consumoChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+    <hr>
+    <section>
+        <div class="container-fluid">
+            <h3>Movimento entre contas</h3>
+            {% include 'config/movimento_conta_data.html' %}
+        </div>
+    </section>
+ 
+
+{% endblock %}
+
+{% block javascript %}
+{% load static %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'load_chart.js'%}"></script>
+<script>
+    let ano = document.getElementById('select_year').value;
+    let mes = document.getElementById('select_month').value;
+    let endpoint = '{% url "chart_contas" "Janeiro" "2025" %}'
+    endpoint = endpoint.replace('Janeiro', mes)
+    endpoint = endpoint.replace('2025', ano)
+    let consumoCtx = document.getElementById("consumoChart").getContext("2d");
+    let consumoChart = new Chart(consumoCtx, {
+        type: "bar",
+        options: {
+        responsive: true,
+            title: {
+            display: false,
+            text: ""
+            }
+        }
+    });
+
+    loadChart(consumoChart, endpoint);
+
+ </script>
+{% endblock javascript %}

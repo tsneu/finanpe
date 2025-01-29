@@ -1,0 +1,22 @@
+<table class="table table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Compra</th>
+        <th scope="col">Vencimento</th>
+        <th scope="col">Descrição</th>
+        <th scope="col">Valor Parcela</th>
+        <th scope="col">Parcela</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in object_list %}
+    <tr>
+        <td>{{ item.data_compra|date:"j/b" }}</td>
+        <td>{{ item.data_vencimento|date:"j/b" }}</td>
+        <td>{{ item.descricao }}</td>
+        <td>{{ item.vl_parcela }}</td>
+        <td>{{ item.nr_parcela }}/{{ item.qt_parcelas }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

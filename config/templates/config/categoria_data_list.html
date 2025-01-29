@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+  FinPes - Resumo Categorias
+{% endblock page_title %}
+
+{% block content %}
+    <h2 class="p-3">Transações por Categorias</h2>
+    <form action="" method="get">
+        {% csrf_token %}
+        {{form_filter}}
+    </form>
+    <hr/>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-5">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Categoria</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Detalhes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in transacao_list %}
+                    <tr>
+                        <td>{{item.categoria__sigla}}</td>
+                        <td>{{item.total|floatformat:2}}</td>
+                        <td><button class="btn btn-light btn-sm detail" data-chave="categoria__sigla" data-filter="{{item.categoria__sigla}}">Detalhes <i class="fa-solid fa-ellipsis"></i></button></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <th scope="col">Quantidade: {{total_rows.total_count}}</th>
+                        <th scope="col">Total: R$ {{total_rows.total_sum|floatformat:2}}</th>
+                        <th></th>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="col-7">
+                <h3 class="p-2" id="title-detail"></h3>
+                <div class="text-bg-light p-3" id="transactions_detail">
+                    <i>Clique em "Detalhes..."</i>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{% load static %}
+<script src="{% static 'filter_detail.js' %}"></script>  
+{% endblock javascript %}

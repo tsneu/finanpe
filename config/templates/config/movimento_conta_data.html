@@ -1,0 +1,26 @@
+{% if movimento_list %}
+<table class="table table-striped">
+<thead>
+    <tr>
+        <th scope="col">Conta origem</th>
+        <th scope="col">Conta destino</th>
+        <th scope="col">Descrição</th>
+        <th scope="col">Data</th>
+        <th scope="col">Valor</th>
+    </tr>
+</thead>
+<tbody>
+    {% for item in movimento_list %}
+    <tr>
+        <td>{{item.conta_origem.sigla}}</td>
+        <td>{{item.conta_destino.sigla}}</td>
+        <td>{{item.descricao}}</td>
+        <td>{{item.data}}</td>
+        <td>{{item.valor}}</td>
+    </tr>
+    {% endfor%}
+</tbody>
+</table>
+{% else %}
+<p>Não há movimentação entre contas no período</p>
+{% endif %}

@@ -1,0 +1,3 @@
+Django
+python-dateutil
+fontawesomefree==6.6.0
