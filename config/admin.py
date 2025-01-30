@@ -3,6 +3,10 @@ from . import models
 from .utils import dates
 from django.core.exceptions import ObjectDoesNotExist
 
+admin.site.site_header = 'Finanpe - Finanças pessoais'
+admin.site.site_title = 'FINANPE'
+
+
 # layout padrão:
 #admin.site.register(models.CentroCusto)
 
