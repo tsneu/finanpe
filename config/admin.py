@@ -1,7 +1,13 @@
 from django.contrib import admin
-from . import models
+from django.db.models import Sum
+from . import models 
 from .utils import dates
 from django.core.exceptions import ObjectDoesNotExist
+from datetime import date
+
+admin.site.site_header = 'Finanpe - Finanças pessoais'
+admin.site.site_title = 'FINANPE'
+
 
 # layout padrão:
 #admin.site.register(models.CentroCusto)
@@ -23,6 +29,34 @@ class CentroCustoAdmin(admin.ModelAdmin):
 class ContaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'sigla', 'saldo', 'limite', 'atualizacao')
     search_fields = ('nome', 'sigla')
+    actions = ['atualizar_saldo',]
+
+    @admin.action(description='Atualizar saldo')
+    def atualizar_saldo(self, request, queryset):
+        cont = 0
+        for item in queryset:
+            try:
+                # transações da conta ainda não consolidadas:
+                obj = models.Transacao.objects.filter(conta=item, data_vencimento__lte=date.today(), consolidado=False)
+                if obj.count() > 0:
+                    cont += 1
+                    # atualizar o saldo com a soma das transações
+                    obj_soma = obj.annotate(total=Sum('vl_parcela'))
+                    item.saldo = item.saldo - obj_soma[0].total
+                    item.save()
+                    # atualizar transações para consolidadas
+                    obj.update(consolidado=True)
+
+            except ObjectDoesNotExist as e:
+                print(f'nenhum lançamento encontrado para conta: {item.nome}')
+
+        if cont == 1:
+            msg = '{} conta foi atualizada'
+        else:
+            msg = '{} contas foram atualizadas'
+        self.message_user(request, msg.format(cont))
+
+
 
 
 @admin.register(models.FormaPagamento)
@@ -76,11 +110,11 @@ class RecorrenteAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Transacao)
-class TransacaoAdmin(admin.ModelAdmin):
-    
-    list_display = ('data_compra', 'data_vencimento', 'descricao','parcelas', 'vl_parcela', 'categoria__sigla', 'situacao')
+class TransacaoAdmin(admin.ModelAdmin):   
+    list_display = ('data_compra', 'data_vencimento', 'descricao','parcelas', 'vl_parcela', 'categoria__sigla', 'consolidado')
     list_filter = ('data_vencimento', 'conta', 'recorrente', 'tipo', 'forma_pagto')
-    #actions = ['duplicar_proximo_mes', ]
+    readonly_fields = ('consolidado', )
+    actions = ['duplicar_proximo_mes', ]
 
     @admin.display()
     def parcelas(self, obj):
@@ -88,4 +122,16 @@ class TransacaoAdmin(admin.ModelAdmin):
     
     @admin.action(description='Duplicar para o próximo mês')
     def duplicar_proximo_mes(self, request, queryset):
-        pass
+        cont = 0
+        for item in queryset:
+            cont += 1
+            item.pk = None
+            item.nr_parcela += 1 if item.qt_parcelas != item.nr_parcela else 0
+            item.data_vencimento = dates.add_date(item.data_vencimento, 'M')
+            item.save()
+
+        if cont == 1:
+            msg = '{} lançamento foi criado'
+        else:
+            msg = '{} lançamentos foram criados'
+        self.message_user(request, msg.format(cont))

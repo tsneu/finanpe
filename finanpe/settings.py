@@ -140,3 +140,5 @@ DATETIME_FORMAT = [
     '%d/%m/%Y %H:%M:S',
     '%d/%m/%Y %H:%M'
 ]
+
+LOGIN_URL = '/admin/login'

@@ -3,12 +3,13 @@ from .models import Transacao, MovimentoConta
 from django.db.models import Count, Sum, Value, CharField
 from django.db.models.functions import ExtractYear, ExtractMonth, Concat
 from django.http import JsonResponse
-from .utils.charts import months, colorSuccess, colorDanger, generate_color_palette
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .utils.charts import months, generate_color_palette
 from .forms import FilterData
 from datetime import date
 
 
-class FilterDataView(ListView):
+class FilterDataView(LoginRequiredMixin, ListView):
     ano = date.today().year
     mes = date.today().month
     mes = months[mes]
@@ -63,7 +64,7 @@ class FilterDataView(ListView):
 
 
 
-class IndexView(ListView):
+class IndexView(LoginRequiredMixin, ListView):
     template_name = "config/index.html"
     
     def get_context_data(self, **kwargs):
@@ -75,7 +76,7 @@ class IndexView(ListView):
 
     def get_queryset(self):
         hoje = date.today()
-        movimento = MovimentoConta.objects.filter(data__year=hoje.year)\
+        movimento = MovimentoConta.objects.filter(data__year=hoje.year, data__month=hoje.month)\
                 .values('data__month', 'tipo', 'conta_destino__sigla').annotate(total=Sum('valor'))\
                 .order_by('tipo')
         return movimento
@@ -84,7 +85,8 @@ class IndexView(ListView):
     def get_consumo(self):
         hoje = date.today()
         consumo = Transacao.objects.filter(data_vencimento__year=hoje.year)\
-                .values('data_vencimento__month').annotate(total=Sum('vl_parcela'))
+                .values('data_vencimento__month').annotate(total=Sum('vl_parcela'))\
+                .order_by('data_vencimento__month')
 
         consumo_list = dict()
         for c in consumo:
