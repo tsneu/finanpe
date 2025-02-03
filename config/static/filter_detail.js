@@ -1,6 +1,6 @@
 function verDetalhes(chave, valor, label=''){
     $.ajax({
-        url: "/transacoes/detalhes",
+        url: "/lancamentos/detalhes",
         method: "GET",
         data: {
             ano: $('#select_year').val(), 

@@ -60,7 +60,7 @@ Esta área foi desenvolvida utilizando o Django Admin, sem modificar o layout.
 4. Formas de pagamento - as formas utilizadas no mundo real: Pix, Débito em conta, Boleto, Cartão de Débito, Cartão de Crédito, Cheque, Dinheiro, etc...
 5. Movimento entre contas: registro de entradas e de transferência de fundos entre as contas.
 6. Fórmulas Centro de custo x Forma pagamento - define agrupamento das formas de pagamento por centro de custo, para visualização do resumo
-7. Transações financeiras: registro do consumo, para onde foi o dinheiro: compras, transferências, investimentos, etc...
+7. Lançamentos: registro do consumo, para onde foi o dinheiro: compras, transferências, investimentos, etc...
 
 
 ## Site
@@ -82,8 +82,11 @@ Nesta área, alguns resumos de dados, com gráficos para complementar.
 * O saldo das contas deve ser atualizado manualmente.
 
 
-## Próximas atualizações
+## Últimas atualizações
 
-1. Adição de função para "clonar" transações para o mês seguinte
-2. Atualização de saldo automaticamente
-3. Geração automática de lançamentos recorrente
+```v.1.1.0```
+
+1. Adição de função para "clonar" transações para o mês seguinte - em admin/Lançamentos
+2. Adição de função para atualizar saldo de contas - em admin/Contas
+3. Adição de função para gerar lançamentos recorrente para o próximo período - em admin/Recorrentes
+4. Autenticação no site - precisa logar para ver qualquer coisa.

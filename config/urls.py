@@ -48,7 +48,7 @@ urlpatterns = [
     ),
     path('chart/contas/<str:month>/<int:year>', ContaDataView.get_contas_chart, name='chart_contas'),
     path(
-        'transacoes/detalhes',
+        'lancamentos/detalhes',
         FilterTransactions.as_view(),
         name='transactions_details'
     ),

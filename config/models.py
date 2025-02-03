@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 from datetime import date
 
 class Categoria(models.Model):
@@ -64,6 +66,35 @@ class MovimentoConta(models.Model):
 
     def __str__(self):
         return self.descricao
+
+
+
+# atualiza valor do saldo
+@receiver(pre_save, sender=MovimentoConta)
+def update_saldo(sender, instance, **kwargs):
+    # restaura saldo anterior
+    if instance.pk:
+        mov = MovimentoConta.objects.get(pk = instance.pk)
+        if instance.conta_origem is not None:
+            instance.conta_origem.saldo += mov.valor # devolve ao saldo origem
+            instance.conta_origem.save()
+        
+        instance.conta_destino.saldo -= mov.valor # retira do saldo destino
+        instance.conta_destino.save()       
+
+
+
+# atualiza valor do saldo
+@receiver(post_save, sender=MovimentoConta)
+def update_saldo(sender, instance, created, **kwargs):
+    # atualiza saldo
+    if instance.conta_origem is not None:
+        instance.conta_origem.saldo -= instance.valor # retira do saldo da origem
+        instance.conta_origem.save()
+
+    instance.conta_destino.saldo += instance.valor # adiciona ao saldo do destino
+    instance.conta_destino.save()
+
 
 
 class Formula(models.Model):
@@ -149,10 +180,11 @@ class Transacao(models.Model):
     recorrente = models.ForeignKey(Recorrente, on_delete=models.DO_NOTHING, null=True, blank=True)
     situacao = models.SmallIntegerField('situação', choices=SITUACAO_CHOICES, default=SIT_ATIVO)
     atualizacao = models.DateTimeField('atualização', auto_now=True)
+    consolidado = models.BooleanField(default=False)
     
     class Meta:
-        verbose_name = "transação"
-        verbose_name_plural = "transações"
+        verbose_name = "lançamento"
+        verbose_name_plural = "lançamentos"
         ordering = ["-data_compra"]
 
     def __str__(self):
