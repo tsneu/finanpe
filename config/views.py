@@ -128,7 +128,29 @@ class CategoriaDataView(FilterDataView):
             }
         
         return context
-        
+
+    def get_categorias_chart(self, month, year):
+        mes = months.index(month)
+        consumo = Transacao.objects.filter(data_vencimento__year=year, data_vencimento__month=mes)\
+                .values('categoria__nome').annotate(total=Sum('vl_parcela'))
+
+        consumo_list = dict()
+        for c in consumo:
+            consumo_list[c['categoria__nome']] = round(c['total'], 2)
+
+        return JsonResponse({
+            "title": f"Consumo por categoria em {month}/{year}",
+            "data": {
+                "labels": list(consumo_list.keys()),
+                "datasets": [{
+                    "label": "Categoria",
+                    "backgroundColor": generate_color_palette(len(consumo_list)),
+                    "borderColor": generate_color_palette(len(consumo_list)),
+                    "data": list(consumo_list.values()),
+                }]
+            },
+        })
+       
 
 class ContaDataView(FilterDataView):
     template_name = 'config/conta_data_list.html'

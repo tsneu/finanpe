@@ -94,6 +94,7 @@ class RecorrenteAdmin(admin.ModelAdmin):
                     obj.pk = None
                     obj.data_compra = item.data
                     obj.data_vencimento = dates.add_date(obj.data_vencimento, item.frequencia)
+                    obj.consolidado = False
                     obj.save()
                     # atualiza a próxima data:
                     item.data = dates.add_date(item.data, item.frequencia)
@@ -128,6 +129,7 @@ class TransacaoAdmin(admin.ModelAdmin):
             item.pk = None
             item.nr_parcela += 1 if item.qt_parcelas != item.nr_parcela else 0
             item.data_vencimento = dates.add_date(item.data_vencimento, 'M')
+            item.consolidado = False
             item.save()
 
         if cont == 1:
