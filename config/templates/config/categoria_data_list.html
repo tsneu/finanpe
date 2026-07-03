@@ -40,17 +40,43 @@
                 </table>
             </div>
             <div class="col-7">
-                <h3 class="p-2" id="title-detail"></h3>
-                <div class="text-bg-light p-3" id="transactions_detail">
-                    <i>Clique em "Detalhes..."</i>
-                </div>
-                
+                <canvas id="consumoChart"></canvas>
             </div>
         </div>
     </div>
+    <h3 class="p-3" id="title-detail"></h3>
+    <div class="text-bg-light p-3" id="transactions_detail">
+        <i>Clique em "Detalhes..."</i>
+    </div>
+
+
 {% endblock %}
 
 {% block javascript %}
 {% load static %}
-<script src="{% static 'filter_detail.js' %}"></script>  
+<script src="{% static 'filter_detail.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'load_chart.js'%}"></script>
+<script>
+    let ano = document.getElementById('select_year').value;
+    let mes = document.getElementById('select_month').value;
+    let endpoint = '{% url "chart_categorias" "Janeiro" "2025" %}'
+    endpoint = endpoint.replace('Janeiro', mes)
+    endpoint = endpoint.replace('2025', ano)
+    let consumoCtx = document.getElementById("consumoChart").getContext("2d");
+    let consumoChart = new Chart(consumoCtx, {
+        type: "doughnut",
+        options: {
+        responsive: true,
+            title: {
+            display: false,
+            text: ""
+            }
+        }
+    });
+
+    loadChart(consumoChart, endpoint);
+
+ </script>
+
 {% endblock javascript %}

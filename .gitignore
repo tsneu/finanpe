@@ -6,3 +6,4 @@ config/migrations/
 config/__pycache__/
 config/utils/__pycache__/
 finanpe/__pycache__/
+/test

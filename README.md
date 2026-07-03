@@ -76,6 +76,23 @@ Nesta área, alguns resumos de dados, com gráficos para complementar.
 4. Saldo de contas: posição final, ou o que sobrou em cada conta.
 
 
+## Importação de CSV
+
+Para executar via linha de comando.
+Somente para lançamentos.
+
+*Instruções:*
+
+1. Crie o arquivo com a primeira linha contendo os títulos dos campos. 
+2. Nos campos de chave estrangeira, adicionar o ``id``. 
+3. Use o separador ponto-e-virgula ``;``.
+
+*Comando:* 
+
+>python3 manage.py import_transactions <caminho-arquivo-.csv>
+
+
+
 ## Mais informações..
 
 * Para usar a função "Criar próximo lançamento" no cadastro de Recorrentes (Adminitração), crie o primeiro lançamento em Transações e atualize a data da recorrência (Recorrentes) para o próximo período (mensal, semestral, anual, etc...).
@@ -83,6 +100,10 @@ Nesta área, alguns resumos de dados, com gráficos para complementar.
 
 
 ## Últimas atualizações
+
+```v.1.1.1``` 
+1. Adição de gráfico para Extratos/Tipo de Operação no site.
+2. Adição de importação de lançamentos por arquivo CSV.
 
 ```v.1.1.0```
 

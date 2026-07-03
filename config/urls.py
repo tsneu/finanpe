@@ -20,6 +20,7 @@ urlpatterns = [
         CategoriaDataView.as_view(),
         name='categorias_data'
     ),
+    path('chart/categorias/<str:month>/<int:year>', CategoriaDataView.get_categorias_chart, name='chart_categorias'),
     path(
         'resumo/categorias/<int:ano>/<str:mes>', 
         CategoriaDataView.as_view(),
